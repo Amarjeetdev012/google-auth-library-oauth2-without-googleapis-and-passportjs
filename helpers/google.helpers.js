@@ -42,7 +42,8 @@ export const peopleData = async (req, res) => {
     refreshToken: data.tokens.refresh_token,
     tokenExpiryDate: data.tokens.expiry_date,
   };
-  res.cookie(`token data`,data.tokens);
+
+  res.cookie(`token data`, newUser, { maxAge: 60 * 10000 });
   const user = await findUser(googleId);
   if (user) {
     if (user.tokenExpiryDate < currentDate) {

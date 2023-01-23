@@ -20,10 +20,11 @@ export const success = async (req, res) => {
 
 export const uploadFile = async (req, res) => {
   const tokenData = req.cookies;
+  console.log('tokenData',tokenData['token data'].accessToken)
   let file = req.file;
   const OAuth2Client = new google.auth.OAuth2();
   OAuth2Client.setCredentials({
-    access_token: tokenData['token data'].access_token,
+    access_token: tokenData['token data'].accessToken,
   });
   const id = req.cookies.googleId;
   const user = await findUser(id);
@@ -63,6 +64,7 @@ export const uploadFile = async (req, res) => {
 };
 
 export const listFile = async (req, res) => {
+    console.log('req.cooikies',req.cookies)
   const id = req.cookies.googleId;
   let user = await findUser(id);
   const googleId = user.googleId;
