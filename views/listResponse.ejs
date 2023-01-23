@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>list of Documents</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 </head>
 <!-- https://drive.google.com/uc?id=10a38xa7DmWMu43zCpqVO5mnfLbAd_-JO&export=download -->
@@ -14,7 +14,7 @@
     <h1>list of files are </h1>
     <ol>
         <% data.forEach(function(data) { %>
-            <img src="https://drive.google.com/thumbnail?id=<%= data.imageId %>">
+            <img src="https://lh3.googleusercontent.com/d/<%= data.imageId %>=s220?authuser=0">
             <li> Name:<%= data.filename %> <br> id:<%= data.imageId %> <br> mimetype:<%=data.mimetype%>
             </li>
             <form action="download" method="POST" enctype="multipart/form-data">
