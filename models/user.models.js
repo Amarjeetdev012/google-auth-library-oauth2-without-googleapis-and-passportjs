@@ -30,6 +30,10 @@ export const findUser = async (id) => {
   return await User.findOne({ googleId: id });
 };
 
-export const createUser = async(user)=>{
-    return await User.create(user)
-}
+export const createUser = async (user) => {
+  return await User.create(user);
+};
+
+export const deleteUser = async (id) => {
+  return await User.findByIdAndDelete({ _id: id });
+};

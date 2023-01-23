@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 dotenv.config();
+import session from 'express-session';
 import { OAuth2Client } from 'google-auth-library';
-import { createUser, findUser } from '../models/user.models.js';
+import { createUser, deleteUser, findUser } from '../models/user.models.js';
 
 const clientID = process.env.GOOGLE_CLIENT_ID;
 const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -41,13 +42,21 @@ export const peopleData = async (req, res) => {
     refreshToken: data.tokens.refresh_token,
     tokenExpiryDate: data.tokens.expiry_date,
   };
+  res.cookie(`token data`,data.tokens);
   const user = await findUser(googleId);
-  if (!user) {
+  if (user) {
+    if (user.tokenExpiryDate < currentDate) {
+      await deleteUser(user._id);
+      req.session.destroy();
+      return res.render('expireToken');
+    }
+  } else {
     await createUser(newUser);
   }
   const tokenInfo = await oAuth2Client.getTokenInfo(
     oAuth2Client.credentials.access_token
   );
-  console.log('tokenInfo', tokenInfo);
-  res.render('home', { data: people.data.names[0] });
+  if (data.tokens) {
+    res.redirect('http://localhost:3000/auth/google/success');
+  }
 };

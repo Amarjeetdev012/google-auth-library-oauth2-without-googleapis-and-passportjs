@@ -9,7 +9,19 @@
 </head>
 
 <body>
-    <h1>welcome <%= data.displayName%> you are succesfully authenticated through oauth2</h1>
+    <h1>you have succesfully logged in </h1>
+
+    <form action="upload" method="POST" enctype="multipart/form-data">
+        <h4>select your file to upload on drive</h4>
+        <input type="file" name="files" multiple required /> <br><br>
+        <input type="submit" value="Upload File" />
+    </form>
+    <br><br><br><br>
+    <h3>get list of files</h3>
+    <form action="list" method="GET">
+        <input type="submit" value="get list of files">
+    </form><br><br>
+
 </body>
 
 </html>
