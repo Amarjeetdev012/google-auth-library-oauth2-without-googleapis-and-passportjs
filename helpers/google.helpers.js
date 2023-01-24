@@ -58,6 +58,6 @@ export const peopleData = async (req, res) => {
     oAuth2Client.credentials.access_token
   );
   if (data.tokens) {
-    res.redirect('http://localhost:3000/auth/google/success');
+    res.redirect('https://google-auth-library.onrender.com/auth/google/success');
   }
 };
