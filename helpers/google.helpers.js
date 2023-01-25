@@ -1,9 +1,11 @@
 import dotenv from 'dotenv';
 dotenv.config();
+import jwt from 'jsonwebtoken';
 import session from 'express-session';
 import { OAuth2Client } from 'google-auth-library';
 import { createUser, deleteUser, findUser } from '../models/user.models.js';
 
+const jwtSecret = process.env.JWTSECRET;
 const clientID = process.env.GOOGLE_CLIENT_ID;
 const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 const redirectUri = process.env.GOOGLE_REDIRECT_URL;
@@ -42,8 +44,10 @@ export const peopleData = async (req, res) => {
     refreshToken: data.tokens.refresh_token,
     tokenExpiryDate: data.tokens.expiry_date,
   };
-
-  res.cookie(`token data`, newUser, { maxAge: 60 * 10000 });
+  const token = jwt.sign({ googleId: people.data.resourceName }, jwtSecret, {
+    expiresIn: '1h',
+  });
+  res.cookie(`token data`, token, { maxAge: 60 * 10000 });
   const user = await findUser(googleId);
   if (user) {
     if (user.tokenExpiryDate < currentDate) {

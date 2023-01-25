@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { google } from 'googleapis';
+import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import { findUser } from '../models/user.models.js';
 import fs from 'fs';
@@ -7,26 +8,26 @@ import { unlink } from 'node:fs';
 import { createDocument, listDocument } from '../models/document.models.js';
 dotenv.config();
 
+const secret = process.env.JWTSECRET;
 const clientID = process.env.GOOGLE_CLIENT_ID;
 const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 const redirectUri = process.env.GOOGLE_REDIRECT_URL;
 const GOOGLE_API_FOLDER_ID = process.env.GOOGLE_FOLDER_ID;
 
 const oAuth2Client = new OAuth2Client(clientID, clientSecret, redirectUri);
-
 export const success = async (req, res) => {
   res.render('home');
 };
-
 export const uploadFile = async (req, res) => {
   const tokenData = req.cookies;
   let file = req.file;
   const OAuth2Client = new google.auth.OAuth2();
+  const decode = jwt.verify(tokenData['token data'], secret);
+  const user = await findUser(decode.googleId);
   OAuth2Client.setCredentials({
-    access_token: tokenData['token data'].accessToken,
+    access_token: user.accessToken
   });
-  const id = req.cookies['token data'].googleId;
-  const user = await findUser(id);
+  const id = user.googleId;
   const path = file.path;
   const drive = google.drive({
     version: 'v3',
@@ -63,8 +64,9 @@ export const uploadFile = async (req, res) => {
 };
 
 export const listFile = async (req, res) => {
-  const id = req.cookies['token data'].googleId;
-  let user = await findUser(id);
+  const tokenData = req.cookies;
+  const decode = jwt.verify(tokenData['token data'], secret);
+  const user = await findUser(decode.googleId);
   const googleId = user.googleId;
   const list = await listDocument(googleId, GOOGLE_API_FOLDER_ID);
   res.render('listResponse', {
