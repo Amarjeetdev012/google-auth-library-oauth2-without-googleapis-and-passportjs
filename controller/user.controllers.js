@@ -96,7 +96,11 @@ export const deleteFile = async (req, res) => {
     auth: OAuth2Client,
   });
   const findImages = await findImage(id);
+  await deleteDocument(id);
+  if (!findImages) {
+    return res.render('alreadyDelete', { data: findImages });
+  }
+  console.log('findImages', findImages);
   await drive.files.delete({ fileId: id });
   res.render('deleteMessage', { data: findImages });
-  await deleteDocument(id);
 };
