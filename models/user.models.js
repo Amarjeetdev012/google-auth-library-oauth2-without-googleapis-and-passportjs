@@ -37,3 +37,4 @@ export const createUser = async (user) => {
 export const deleteUser = async (id) => {
   return await User.findByIdAndDelete({ _id: id });
 };
+

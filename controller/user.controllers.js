@@ -5,7 +5,12 @@ import { OAuth2Client } from 'google-auth-library';
 import { findUser } from '../models/user.models.js';
 import fs from 'fs';
 import { unlink } from 'node:fs';
-import { createDocument, listDocument } from '../models/document.models.js';
+import {
+  createDocument,
+  deleteDocument,
+  findImage,
+  listDocument,
+} from '../models/document.models.js';
 dotenv.config();
 
 const secret = process.env.JWTSECRET;
@@ -25,7 +30,7 @@ export const uploadFile = async (req, res) => {
   const decode = jwt.verify(tokenData['token data'], secret);
   const user = await findUser(decode.googleId);
   OAuth2Client.setCredentials({
-    access_token: user.accessToken
+    access_token: user.accessToken,
   });
   const id = user.googleId;
   const path = file.path;
@@ -65,6 +70,9 @@ export const uploadFile = async (req, res) => {
 
 export const listFile = async (req, res) => {
   const tokenData = req.cookies;
+  if (!tokenData['token data']) {
+    return res.render('expireToken');
+  }
   const decode = jwt.verify(tokenData['token data'], secret);
   const user = await findUser(decode.googleId);
   const googleId = user.googleId;
@@ -72,4 +80,23 @@ export const listFile = async (req, res) => {
   res.render('listResponse', {
     data: list,
   });
+};
+
+export const deleteFile = async (req, res) => {
+  const id = req.params.id;
+  const tokenData = req.cookies;
+  const OAuth2Client = new google.auth.OAuth2();
+  const decode = jwt.verify(tokenData['token data'], secret);
+  const user = await findUser(decode.googleId);
+  OAuth2Client.setCredentials({
+    access_token: user.accessToken,
+  });
+  const drive = google.drive({
+    version: 'v3',
+    auth: OAuth2Client,
+  });
+  const findImages = await findImage(id);
+  await drive.files.delete({ fileId: id });
+  res.render('deleteMessage', { data: findImages });
+  await deleteDocument(id);
 };

@@ -17,8 +17,9 @@
             <img src="https://lh3.googleusercontent.com/d/<%= data.imageId %>=s220?authuser=0">
             <li> Name:<%= data.filename %> <br> id:<%= data.imageId %> <br> mimetype:<%=data.mimetype%>
             </li>
-            <form action="download" method="POST" enctype="multipart/form-data">
-                <a href="https://drive.google.com/uc?id=<%= data.imageId %>&export=download">Download</a><br><br>
+            <form action="delete/<%= data.imageId %>" method="POST" enctype="multipart/form-data">
+                <a href="https://drive.google.com/uc?id=<%= data.imageId %>&export=download">Download</a><br>
+                <button type="submit" value="data.imageId"><b>click here to delete</b> </button><br><br>
             </form>
             <% }); %>
     </ol>

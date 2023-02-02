@@ -38,5 +38,16 @@ export const createDocument = async (data) => {
 };
 
 export const listDocument = async (googleId, folderId) => {
-  return await Document.find({ googleId: googleId, folderId: folderId });
+  return await Document.find({
+    $and: [{ googleId: googleId }, { folderId: folderId }],
+  });
+};
+
+export const findImage = async (id) => {
+  const data = await Document.findOne({ imageId: id });
+  return data;
+};
+
+export const deleteDocument = async (id) => {
+  return await Document.findOneAndDelete({ imageId: id });
 };
